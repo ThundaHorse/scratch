@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var inputs_1 = require("./inputs");
 /**
  * You have a fence consisting of n vertical planks, each with a certain height (given as an array of integers). You need to paint the entire fence.
  *
@@ -44,41 +47,86 @@
 // 1. Process the fence level by level, starting from the bottom
 // 2. At each level, determine if h or v strokes are more efficient
 // 3. Accumulate the min strokes needed
-var minStrokes = function (heights) {
+var minStrokes1 = function (heights) {
     // Edge case: If all heights are 0, no strokes are needed
     if (heights.every(function (height) { return height === 0; }))
         return 0;
-    var maxHeight = Math.max.apply(Math, heights);
+    var minPlanks = heights.length;
+    var minHeight = Math.max.apply(Math, heights);
     // Create 2D grid representing fence (rows = height, columns = plank positions)
-    var fence = Array(maxHeight)
-        .fill(0)
-        .map(function () { return Array(heights.length).fill(false); });
+    var fence = Array.from({ length: heights.length }, function () {
+        return Array(minPlanks).fill(false);
+    });
     for (var col = 0; col < heights.length; col++) {
         for (var row = 0; row < heights[col]; row++) {
             fence[row][col] = true;
         }
     }
-    console.log(fence);
-    return 0;
+    var total = 0;
+    // Process each height level from bottom to top
+    for (var row = 0; row < minHeight; row++) {
+        var horSegs = 0;
+        var isPrevPainted = false;
+        // Count horizontal segments at this height level
+        for (var col = 0; col < heights.length; col++) {
+            if (fence[row][col]) {
+                // If previous plank wasn't pained, new segment
+                if (!isPrevPainted) {
+                    horSegs++;
+                }
+                isPrevPainted = true;
+            }
+            else {
+                // If current plank isn't painted, reset previous painted state
+                isPrevPainted = false;
+            }
+        }
+        // Add the number of horizontal segments to min strokes
+        total += horSegs;
+    }
+    return total;
 };
-var heights1 = [1, 1, 1];
-var heights2 = [3, 1, 3];
-var heights3 = [4, 1, 3, 2];
-var heights4 = [0, 0, 0, 0]; // Edge case: all planks are of height 0
-var heights5 = [5, 0, 5, 0, 5]; // Edge case: alternating heights
-var heights6 = [2, 3, 1, 4]; // Edge case: varying heights
-// console.log(minStrokes(heights1)); // Output: 1. All planks can be painted with one horizontal stroke.
-console.log(minStrokes(heights2)); // Output: 3. Best approach is to use vertical strokes on planks 0 and 2, and a horizontal stroke on plank 1.
-// // Vertical stroke on plank 0 -> [3, 0, 3]
-// console.log(minStrokes(heights3)); // Output: 4. Best approach is to mix horizontal and vertical strokes.
-// // // Horizontal stroke across all planks at height 1 -> [3, 0, 2, 1]
-// // // Vertical stroke on plank 2 -> [3, 0, 0, 1]
-// // // Horizontal stroke on planks 0 and 3 -> [2, 0, 0, 0]
-// // // Vertical stroke on plank 0 -> [0, 0, 0, 0]
-// console.log(minStrokes(heights4)); // Output: 0. No strokes needed since all planks are of height 0.
-// console.log(minStrokes(heights5)); // Output: 3. Best approach is to use vertical strokes on planks 0, 2, and 4, and a horizontal stroke on plank 1.
-// console.log(minStrokes(heights6)); // Output: 4. Best approach is to mix horizontal and vertical strokes.
-// // Horizontal stroke across all planks at height 1 -> [2, 2, 1, 2]
-// // Vertical stroke on plank 2 -> [2, 2, 0, 2]
-// // Horizontal stroke on planks 0 and 3 -> [1, 1, 0, 1]
-// // Vertical stroke on plank 0 -> [0, 1, 0, 0]
+var minStrokes = function (heights, l, r, base, output) {
+    if (l === void 0) { l = 0; }
+    if (r === void 0) { r = heights.length - 1; }
+    if (base === void 0) { base = 0; }
+    if (output === void 0) { output = []; }
+    // Base case: empty segment
+    if (l > r)
+        return 0;
+    // All vertical strokes
+    var minVerticalStrokes = r - l + 1;
+    // Find the minimum height in the current segment
+    // Set to Infinity to ensure we find the minimum
+    var minH = Infinity;
+    for (var i_1 = l; i_1 <= r; i_1++) {
+        minH = Math.min(minH, heights[i_1]);
+    }
+    // Horizontal stroke across the entire segment, then recursively solve for subsegments
+    var strokes = minH - base;
+    var i = l;
+    output.push(i);
+    // Count horizontal strokes
+    while (i <= r) {
+        // Skip painted planks
+        if (heights[i] === minH) {
+            i++;
+            continue;
+        }
+        // Find the next segment above minH
+        var j = i;
+        // Find the end of the segment where heights are greater than minH
+        while (j <= r && heights[j] > minH)
+            j++;
+        strokes += minStrokes(heights, i, j - 1, minH, output);
+        // Set the next starting point
+        i = j;
+    }
+    return Math.min(minVerticalStrokes, strokes);
+};
+console.log(minStrokes(inputs_1.heights.get(1))); // All planks can be painted with one horizontal stroke.
+console.log(minStrokes(inputs_1.heights.get(2))); // Best approach is to use vertical strokes on planks 0 and 2, and a horizontal stroke on plank 1.
+console.log(minStrokes(inputs_1.heights.get(3))); // Best approach is to mix horizontal and vertical strokes.
+console.log(minStrokes(inputs_1.heights.get(4))); // Edge case: all planks are of height 0
+console.log(minStrokes(inputs_1.heights.get(5))); // Edge case: alternating heights
+console.log(minStrokes(inputs_1.heights.get(6))); // Edge case: varying heights

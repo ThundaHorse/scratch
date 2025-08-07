@@ -1,0 +1,64 @@
+Section1:
+  - Description: Refactoring guidelines
+refactoring_guidelines:
+  context_is_king: 'Analyze code within its broader context. Consider project scope, dependencies, and architecture.'
+  clarity_over_cleverness: 'Prioritize clear, readable, and maintainable code over clever one-liners.'
+  explain_why: 'Always explain the reason for changes, including trade-offs and best practices.'
+  prioritize_clarity_readability: true
+  enforce_strict_typescript: true
+  advocate_immutability_pure_functions: true
+  single_responsibility_principle: true
+  eliminate_code_duplication: true
+
+code_analysis_review_protocol:
+  clarity_readability_maintainability:
+    naming_conventions:
+      rule: 'Flag ambiguous names and suggest descriptive alternatives.'
+    function_design:
+      rule: 'Split functions that do multiple unrelated actions. Name should describe its job.'
+    comments_documentation:
+      rule: 'Suggest comments for complex logic and public functions. Recommend JSDoc/TSDoc.'
+    type_safety_analysis: "Verify explicit typing, proper use of interfaces/types, avoid 'any'."
+    architecture_assessment: 'Check dependency injection, feature-based organization, SOLID.'
+    async_error_handling: 'Ensure async/await usage, custom Error classes, no unhandled promises.'
+  best_practices_modern_syntax:
+    embrace_modern_js_ts:
+      rule: 'Replace var with let/const, use arrow functions, spread/rest, destructuring, optional chaining.'
+    type_safety:
+      rule: "Identify 'any', recommend specific types or generics, extract complex types."
+    immutability:
+      rule: 'Favor immutable patterns, copy arrays/objects before modifying.'
+    error_handling:
+      rule: 'Detect async ops lacking error handling, recommend robust error handling.'
+  performance_data_structures_algorithms:
+    pattern_recognition: 'Identify computational patterns and match optimal data structures.'
+    loop_in_a_loop_detector:
+      rule: 'Flag nested loops with O(n^2) or worse complexity.'
+    data_structure_heuristics:
+      array_includes_in_loop:
+        trigger: 'Recommend Set for O(1) lookups.'
+      array_find_in_loop:
+        trigger: 'Recommend Map for O(1) lookups.'
+      stack_pattern:
+        trigger: 'Explicitly name Stack for LIFO problems.'
+      queue_pattern:
+        trigger: 'Explicitly name Queue for FIFO problems.'
+      two_pointers_pattern:
+        trigger: 'Recognize Two Pointers for sorted array optimizations.'
+      sliding_window_pattern:
+        trigger: 'Identify Sliding Window for contiguous subarray/substring calculations.'
+
+explanation_example_protocol:
+  recommendation_structure:
+    observation: 'Describe what is noticed in the code.'
+    implication: 'Explain the impact or complexity.'
+    recommendation: 'Suggest a more optimal solution.'
+    result: 'Describe the improvement.'
+    code_example: 'Provide before/after runnable code.'
+  demonstrate_with_file_structures:
+    rule: 'Show full context, including file, imports, exports, and usage.'
+    example_presentation: 'Refactor data fetching logic to be reusable and efficient, with before/after code and architectural context.'
+
+notes:
+  - 'Be thorough but constructive, focusing on education and improvement.'
+  - 'Always explain reasoning to help developers understand principles.'
