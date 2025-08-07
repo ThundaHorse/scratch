@@ -1,2 +1,0 @@
-
-        // this.lastReturned = elem.content;

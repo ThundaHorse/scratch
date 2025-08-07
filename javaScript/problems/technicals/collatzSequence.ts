@@ -8,33 +8,57 @@
  * 4. Repeat the process for the new value of n until n becomes 1.
  */
 
-// Write a function that returns the number of steps required to reach 1 for a given positive integer n.
-// The function should return the number of steps taken to reach 1.
-const collatzSequence = (n: number): number => {
-  // Base case: if n is 1, return 0 steps
+// A cache to store the results of previous computations (memoization)
+const memo = new Map<number, number>();
+
+/**
+ * Recursively calculates the number of steps for a number to reach 1.
+ * This is the core logic, optimized with memoization.
+ */
+const calculateSteps = (n: number): number => {
+  // Base case: The sequence ends when n is 1.
   if (n === 1) return 0;
 
-  // Initialize step counter
-  // Start with 1 step for the initial value of n
-  let steps: number = 1;
+  // Check if the result for the current number is already in the cache.
+  if (memo.has(n)) return memo.get(n)!;
 
-  // Loop until n becomes 1
-  while (n !== 1) {
-    // If n is even, divide it by 2
-    if (n % 2 === 0) {
-      n = n / 2;
-    }
-    // If n is odd, multiply it by 3 and add 1
-    else {
-      n = n * 3 + 1;
-    }
+  // Apply the Collatz rule and make a recursive call.
+  const nextN = n % 2 === 0 ? n / 2 : 3 * n + 1;
+  const steps = 1 + calculateSteps(nextN);
 
-    steps++;
-  }
+  // Cache the result for the current number `n` before returning.
+  // This ensures that we never calculate the steps for the same number twice.
+  memo.set(n, steps);
 
   return steps;
 };
 
-console.log(collatzSequence(10)); // Output: 6
-console.log(collatzSequence(15)); // Output: 18
-console.log(collatzSequence(20)); // Output: 8
+/**
+ * Calculates the number of steps required for a number to reach 1 using the Collatz sequence.
+ * This implementation uses a recursive approach with memoization for optimal performance.
+ */
+const collatzSequence = (n: number): number => {
+  // 1. Input Validation: The Collatz conjecture is defined for positive integers.
+  if (n <= 0) {
+    throw new Error('Input must be a positive integer.');
+  }
+
+  // Recurse
+  return calculateSteps(n);
+};
+
+// Example Usage:
+try {
+  console.log(`Steps for 10: ${collatzSequence(10)}`); // Expected: 6
+  console.log(`Steps for 1: ${collatzSequence(1)}`); // Expected: 0
+  console.log(`Steps for 15: ${collatzSequence(15)}`); // Expected: 17
+  console.log(`Steps for 20: ${collatzSequence(20)}`); // Expected: 7
+  // This second call for 10 will be much faster as it's now cached.
+  console.log(`Steps for 10 (cached): ${collatzSequence(10)}`);
+  // This call for 20 will also be faster because its subproblem (10) is now fully cached.
+  console.log(`Steps for 20 (cached): ${collatzSequence(20)}`);
+} catch (error) {
+  if (error instanceof Error) {
+    console.error(error.message);
+  }
+}
