@@ -1,4 +1,4 @@
-import { heights } from './inputs';
+import { heights } from './inputs.js';
 
 /**
  * You have a fence consisting of n vertical planks, each with a certain height (given as an array of integers). You need to paint the entire fence.

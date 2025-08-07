@@ -56,7 +56,7 @@ const decodeString = (s: string): string => {
   return currentString;
 };
 
-// console.log(decodeString('3[a]2[bc]')); // Output: "aaabcbc"
-// console.log(decodeString('3[a2[c]]')); // Output: "accaccacc"
-// console.log(decodeString('2[abc]3[cd]ef')); // Output: "abcabccdcdcdef"
+console.log(decodeString('3[a]2[bc]')); // Output: "aaabcbc"
+console.log(decodeString('3[a2[c]]')); // Output: "accaccacc"
+console.log(decodeString('2[abc]3[cd]ef')); // Output: "abcabccdcdcdef"
 console.log(decodeString('abc3[cd]xyz')); // Output: "abccdcdcdxyz"
