@@ -1,35 +1,55 @@
-function minimumBribes(q: number[]): void {
-  if (!q || q.length === 0) return;
+/**
+ * Given a list of toy prices and an amount to spend, determine the maximum number of gifts you can buy.
+ * Each item may only be purchased once
+ *
+ * Topics: Greedy Algorithms
+ * Recommended Approach: Sort the prices in ascending order and iterate through the list, purchasing items until the budget is exhausted.
+ */
 
-  let totalBribes: number = 0;
+const maximumToys = (prices: number[], k: number): number => {
+  // Base case
+  if (prices.length === 0 || k <= 0) return 0;
 
-  // Check each person in the queue
-  for (let currentPos: number = 0; currentPos < q.length; currentPos++) {
-    const personId: number = q[currentPos];
-    const originalPos: number = personId - 1; // 0 based index
+  prices.sort((a, b) => a - b);
 
-    // Check if moved forward more than 2
-    const forwardMoves: number = originalPos - currentPos;
-    if (forwardMoves > 2) {
-      console.log('Too chaotic');
-      return;
-    }
+  const affordableGifts: Set<number> = new Set<number>();
 
-    // Count how many people with larger IDs are in front of this person
-    // These are the people who must have bribed to get past this person
-    //
-    // Key insight: Person X can only be bribed by people who:
-    // 1. Started behind them (have larger ID)
-    // 2. Are now in front of them
-    const checkFrom: number = Math.max(0, originalPos - 1);
-    for (let j: number = checkFrom; j < currentPos; j++) {
-      if (q[j] > personId) totalBribes++;
+  // Find index where unaffordable
+  for (let i: number = 0; i < prices.length; i++) {
+    if (prices[i] > k) {
+      break;
+    } else {
+      affordableGifts.add(prices[i]);
     }
   }
 
-  console.log(totalBribes.toString());
-}
+  const affordableGiftsArray = Array.from(affordableGifts.values());
+  const totalSpent: Map<number, number[]> = new Map<number, number[]>();
+  let max: number = affordableGifts.size;
 
-console.log(minimumBribes([2, 1, 5, 3, 4])); // 3
-console.log(minimumBribes([2, 5, 1, 3, 4])); // Too chaotic
-console.log(minimumBribes([1, 2, 5, 3, 7, 8, 6, 4])); // 7
+  let left: number = 0;
+  let right: number = affordableGiftsArray.length - 1;
+
+  while (left < right) {
+    let tempSum: number = 0;
+
+    if (!max || tempSum > max) {
+      max = tempSum;
+      totalSpent.set(max, [...affordableGiftsArray.slice(left, right + 1)]);
+    }
+
+    if (tempSum + affordableGiftsArray[left] > k) {
+      right--;
+    } else {
+      tempSum += affordableGiftsArray[left];
+      left++;
+    }
+  }
+
+  console.log(totalSpent);
+  return 0;
+};
+
+console.log(maximumToys([1, 12, 5, 111, 200, 1000, 10], 50)); // 4 [1, 12, 5, 10]
+
+console.log(maximumToys([1, 2, 20, 40, 200, 100, 40, 1000000], 10000)); // 6 [1, 2, 20, 40, 100, 200]
