@@ -1,55 +1,38 @@
 /**
- * Given a list of toy prices and an amount to spend, determine the maximum number of gifts you can buy.
- * Each item may only be purchased once
+ * You are given a string s consisting of lowercase english characters, as well as opening and closing parentheses
+ * Remove the minimum number of parentheses so that the resulting string is valid
+ * A parentheses string is valid if all of the following conditions are met:
+ * - It is the empty string, contains only lowercase characters, or
+ * - It can be written as AB (A concatenated with B), where A and B are valid strings or
+ * - It can be written as (A), where A is a valid string
  *
- * Topics: Greedy Algorithms
- * Recommended Approach: Sort the prices in ascending order and iterate through the list, purchasing items until the budget is exhausted.
+ * Topic: String Manipulation
+ * Recommended Approach: Use a stack to keep track of the indices of opening parentheses and the positions of invalid closing parentheses
  */
 
-const maximumToys = (prices: number[], k: number): number => {
-  // Base case
-  if (prices.length === 0 || k <= 0) return 0;
+const minRemoveToMakeValid = (s: string): string => {
+  const arr: string[] = [...s];
+  const stack: number[] = [];
 
-  prices.sort((a, b) => a - b);
-
-  const affordableGifts: Set<number> = new Set<number>();
-
-  // Find index where unaffordable
-  for (let i: number = 0; i < prices.length; i++) {
-    if (prices[i] > k) {
-      break;
-    } else {
-      affordableGifts.add(prices[i]);
+  for (let i: number = 0; i < arr.length; i++) {
+    if (arr[i] === '(') {
+      stack.push(i);
+    } else if (arr[i] === ')') {
+      if (stack.length > 0) {
+        // Found a matching opening parenthesis
+        stack.pop();
+      } else {
+        // Found an invalid closing parenthesis
+        arr[i] = '';
+      }
     }
   }
 
-  const affordableGiftsArray = Array.from(affordableGifts.values());
-  const totalSpent: Map<number, number[]> = new Map<number, number[]>();
-  let max: number = affordableGifts.size;
-
-  let left: number = 0;
-  let right: number = affordableGiftsArray.length - 1;
-
-  while (left < right) {
-    let tempSum: number = 0;
-
-    if (!max || tempSum > max) {
-      max = tempSum;
-      totalSpent.set(max, [...affordableGiftsArray.slice(left, right + 1)]);
-    }
-
-    if (tempSum + affordableGiftsArray[left] > k) {
-      right--;
-    } else {
-      tempSum += affordableGiftsArray[left];
-      left++;
-    }
-  }
-
-  console.log(totalSpent);
-  return 0;
+  // Remove any unmatched opening parentheses
+  while (stack.length) arr[stack.pop()!] = '';
+  return arr.join('');
 };
 
-console.log(maximumToys([1, 12, 5, 111, 200, 1000, 10], 50)); // 4 [1, 12, 5, 10]
-
-console.log(maximumToys([1, 2, 20, 40, 200, 100, 40, 1000000], 10000)); // 6 [1, 2, 20, 40, 100, 200]
+console.log(minRemoveToMakeValid('nee(t(c)o)de)')); // 'nee(t(c)o)de'
+console.log(minRemoveToMakeValid('x(y)z(')); // "x(y)z"
+console.log(minRemoveToMakeValid('))()((')); // "()"

@@ -1,10 +1,30 @@
 /**
- * Given a list of toy prices and an amount to spend, determine the maximum number of gifts you can buy.
- * Each item may only be purchased once
+ * You are given a string s consisting of lowercase english characters, as well as opening and closing parentheses
+ * Remove the minimum number of parentheses so that the resulting string is valid
+ * A parentheses string is valid if all of the following conditions are met:
+ * - It is the empty string, contains only lowercase characters, or
+ * - It can be written as AB (A concatenated with B), where A and B are valid strings or
+ * - It can be written as (A), where A is a valid string
  *
- * Topics: Greedy Algorithms
- * Recommended Approach: Sort the prices in ascending order and iterate through the list, purchasing items until the budget is exhausted.
+ * Topic: String Manipulation
+ * Recommended Approach: Use a stack to keep track of the indices of opening parentheses and the positions of invalid closing parentheses
  */
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -14,42 +34,27 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-var maximumToys = function (prices, k) {
-    // Base case
-    if (prices.length === 0 || k <= 0)
-        return 0;
-    prices.sort(function (a, b) { return a - b; });
-    var affordableGifts = new Set();
-    // Find index where unaffordable
-    for (var i = 0; i < prices.length; i++) {
-        if (prices[i] > k) {
-            break;
+var minRemoveToMakeValid = function (s) {
+    var arr = __spreadArray([], __read(s), false);
+    var stack = [];
+    for (var i = 0; i < arr.length; i++) {
+        if (arr[i] === '(') {
+            stack.push(i);
         }
-        else {
-            affordableGifts.add(prices[i]);
-        }
-    }
-    var affordableGiftsArray = Array.from(affordableGifts.values());
-    var totalSpent = new Map();
-    var max = affordableGifts.size;
-    var left = 0;
-    var right = affordableGiftsArray.length - 1;
-    while (left < right) {
-        var tempSum = 0;
-        if (!max || tempSum > max) {
-            max = tempSum;
-            totalSpent.set(max, __spreadArray([], affordableGiftsArray.slice(left, right + 1), true));
-        }
-        if (tempSum + affordableGiftsArray[left] > k) {
-            right--;
-        }
-        else {
-            tempSum += affordableGiftsArray[left];
-            left++;
+        else if (arr[i] === ')') {
+            if (stack.length > 0) {
+                console.log(stack);
+                stack.pop();
+            }
+            else {
+                arr[i] = '';
+            }
         }
     }
-    console.log(totalSpent);
-    return 0;
+    while (stack.length)
+        arr[stack.pop()] = '';
+    return arr.join('');
 };
-console.log(maximumToys([1, 12, 5, 111, 200, 1000, 10], 50)); // 4 [1, 12, 5, 10]
-console.log(maximumToys([1, 2, 20, 40, 200, 100, 40, 1000000], 10000)); // 6 [1, 2, 20, 40, 100, 200]
+console.log(minRemoveToMakeValid('nee(t(c)o)de)')); // 'nee(t(c)o)de'
+console.log(minRemoveToMakeValid('x(y)z(')); // "x(y)z"
+console.log(minRemoveToMakeValid('))()((')); // "()"
