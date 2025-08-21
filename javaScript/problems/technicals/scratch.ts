@@ -34,6 +34,13 @@ class Stack {
     return this.data.length;
   }
 
+  pop(): number | undefined {
+    if (!this.data) return undefined;
+    const last = this.data.pop()!;
+    this.heapDown(0);
+    return last;
+  }
+
   private heapDown(index: number): void {
     const n: number = this.data.length;
     const val: number = this.data[index];
@@ -129,11 +136,15 @@ class SetOfStacks {
     return this.stackSets;
   }
 
-  popAt(num: number): void {}
+  popAt(num: number): number | undefined {
+    if (!this.stacks[num]) return undefined;
+    console.log(this.stacks[num]);
+    return this.stacks[num].pop();
+  }
 }
 
 const plates = [2, 7, 2, 3, 5, 6, 4, 42, 2, 69];
 const stackSet = new SetOfStacks(plates, 3); // [[2, 7, 2], [3, 5, 6], [4, 42, 2], [69]]
-console.log(stackSet.showAt(1));
-console.log(stackSet.showAll());
 stackSet.buildSubStacks();
+console.log(stackSet.popAt(2));
+console.log(stackSet.showAt(2));

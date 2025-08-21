@@ -28,6 +28,13 @@ var Stack = /** @class */ (function () {
     Stack.prototype.getSize = function () {
         return this.data.length;
     };
+    Stack.prototype.pop = function () {
+        if (!this.data)
+            return undefined;
+        var last = this.data.pop();
+        this.heapDown(0);
+        return last;
+    };
     Stack.prototype.heapDown = function (index) {
         var n = this.data.length;
         var val = this.data[index];
@@ -105,11 +112,16 @@ var SetOfStacks = /** @class */ (function () {
     SetOfStacks.prototype.showAll = function () {
         return this.stackSets;
     };
-    SetOfStacks.prototype.popAt = function (num) { };
+    SetOfStacks.prototype.popAt = function (num) {
+        if (!this.stacks[num])
+            return undefined;
+        console.log(this.stacks[num]);
+        return this.stacks[num].pop();
+    };
     return SetOfStacks;
 }());
 var plates = [2, 7, 2, 3, 5, 6, 4, 42, 2, 69];
 var stackSet = new SetOfStacks(plates, 3); // [[2, 7, 2], [3, 5, 6], [4, 42, 2], [69]]
-console.log(stackSet.showAt(1));
-console.log(stackSet.showAll());
 stackSet.buildSubStacks();
+console.log(stackSet.popAt(2));
+console.log(stackSet.showAt(2));
