@@ -1,150 +1,46 @@
-/**
- * Implement SetOfStacks, should be composed of several stacks and should create a new stack once the previous one exceedsd capacity
- *
- * push() and pop() should behave identically to a single stack (should return the same values as it would if it were a single stack)
- *
- * Follow-Up: Implement popAt(num: number) -> performs a pop() on a specific sub-stack
- *
- * Stacks use LIFO, uses the following operations:
- *
- * pop(): Remove top item from the stack
- * push(item): Add item to top of stack
- * peek(): Return the top of the stack
- * isEmpty(): Return true only if stack is empty
- *
- */
+class ListNode<T> {
+  value: T;
+  next: ListNode<T> | undefined;
 
-class Stack {
-  private data: number[] = [];
-  private type: string = '';
-  private atCapacity: boolean;
-
-  constructor(nums: number[], type: string, atCapacity: boolean) {
-    this.data = nums;
-    this.type = type;
-    this.atCapacity = atCapacity;
-    this.type === 'min' ? this.buildMinHeap() : this.buildMaxHeap();
-  }
-
-  show(): void {
-    console.log(this.data);
-  }
-
-  getSize(): number {
-    return this.data.length;
-  }
-
-  pop(): number | undefined {
-    if (!this.data) return undefined;
-    const last = this.data.pop()!;
-    this.heapDown(0);
-    return last;
-  }
-
-  private heapDown(index: number): void {
-    const n: number = this.data.length;
-    const val: number = this.data[index];
-
-    while (index < n >>> 1) {
-      let left: number = (index << 1) + 1;
-      const right: number = left + 1;
-
-      let smallest: number =
-        right < n && this.data[right] < this.data[left] ? right : left;
-      const childVal: number = this.data[smallest];
-
-      if (childVal >= val) break;
-
-      // Move up
-      this.data[index] = childVal;
-      index = smallest;
-    }
-
-    this.data[index] = val;
-  }
-
-  private heapUp(index: number): void {
-    const val: number = this.data[index];
-
-    while (val > 0) {
-      const parentIdx: number = (index - 1) >>> 1;
-      const parentVal: number = this.data[parentIdx];
-
-      if (parentVal <= val) break;
-
-      // Move parent down
-      this.data[index] = parentVal;
-      index = parentIdx;
-    }
-    this.data[index] = val;
-  }
-
-  private buildMinHeap(): void {
-    for (let i: number = (this.data.length >>> 1) - 1; i >= 0; i--) {
-      this.heapDown(i);
-    }
-  }
-
-  private buildMaxHeap(): void {
-    for (let i: number = 0; i <= (this.data.length >>> 1) - 1; i++) {
-      this.heapUp(i);
-    }
+  constructor(value: T, next: ListNode<T> | undefined = undefined) {
+    this.value = value;
+    this.next = next;
   }
 }
 
-class SetOfStacks {
-  private stacks: Stack[] = [];
-  private stackSets: number[][] = [];
-  private data: number[] = [];
-  totalStacks: number | undefined;
-  height: number = 0;
+const reverseLinkedList = (
+  head: ListNode<number> | undefined
+): ListNode<number> | undefined => {
+  if (!head) return undefined;
 
-  constructor(plates: number[], height: number) {
-    this.data = plates;
-    this.totalStacks = Math.floor(plates.length / height);
-    this.height = height;
-    this.breakUpStacks();
+  let prev: ListNode<number> | undefined = undefined;
+  let current: ListNode<number> | undefined = head;
+  const reversedNodeVals: number[] = [];
+
+  // NCPC = Next, current, previous, current
+  while (current) {
+    console.log(prev?.value);
+
+    // Set next to head's next
+    const next: ListNode<number> | undefined = current.next;
+    // Set current next to previous
+    current.next = prev;
+    // Set previous node to current
+    prev = current;
+    // Advance current node
+    current = next;
+
+    console.log(prev.value);
+    if (current?.value) reversedNodeVals.push(current?.value);
   }
 
-  breakUpStacks(): void {
-    let start: number = 0;
+  console.log(reversedNodeVals);
+  return prev;
+};
 
-    while (start < this.data.length) {
-      let end: number = start + this.totalStacks!;
+const listNodes = new ListNode<number>(
+  0,
+  new ListNode<number>(1, new ListNode<number>(2, new ListNode<number>(3)))
+);
 
-      let subStack: number[] = this.data.slice(start, end);
-      this.stackSets.push(subStack);
-      start += this.height;
-    }
-  }
-
-  buildSubStacks(type: string = 'min'): void {
-    if (!this.stackSets) throw new Error("Ain't no plates");
-
-    this.stackSets.forEach((range: number[]) => {
-      this.stacks.push(new Stack(range, type, range.length === this.height));
-    });
-
-    console.log(this.stacks);
-  }
-
-  showAt(num: number): number[] {
-    return this.stackSets[num];
-  }
-
-  showAll(): number[][] {
-    return this.stackSets;
-  }
-
-  popAt(num: number): number | undefined {
-    if (!this.stacks[num]) return undefined;
-    console.log(this.stacks[num]);
-    return this.stacks[num].pop();
-  }
-}
-
-const plates = [2, 7, 2, 3, 5, 6, 4, 42, 2, 69];
-const stackSet = new SetOfStacks(plates, 3); // [[2, 7, 2], [3, 5, 6], [4, 42, 2], [69]]
-stackSet.buildSubStacks();
-console.log(stackSet.popAt(2));
-console.log(stackSet.showAt(2));
+console.log(reverseLinkedList(listNodes)); // 3 -> 2 -> 1 -> 0
